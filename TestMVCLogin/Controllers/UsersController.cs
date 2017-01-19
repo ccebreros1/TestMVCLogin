@@ -38,7 +38,8 @@ namespace TestMVCLogin.Controllers
             //User not logged in is goiung back to home page
             else
             {
-                return RedirectToAction("Index", "Home");
+                ViewBag.displayMenu = "You are not an user";
+                return View();
             }
         }
 

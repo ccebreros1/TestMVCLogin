@@ -56,7 +56,8 @@ namespace TestMVCLogin.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "UserName")]
+        //This property is for the text that is going to be displayed on the label of the form
+        [Display(Name = "User Name")]
         public string UserName { get; set; }
 
         [Required]
@@ -77,7 +78,7 @@ namespace TestMVCLogin.Models
 
         //Added User Name for registration
         [Required]
-        [Display(Name = "UserName")]
+        [Display(Name = "User Name")]
         public string UserName { get; set; }
 
         //Added role
