@@ -167,7 +167,6 @@ namespace TestMVCLogin.Controllers
                         //Assign Role to user Here      
                         await this.UserManager.AddToRoleAsync(user.Id, "unregisteredUsers");
                     //Ends Here   
-                    User.Identity.IsAuthenticated.Equals(false);
                         return RedirectToAction("Index", "Users");
                     }
                     AddErrors(result);

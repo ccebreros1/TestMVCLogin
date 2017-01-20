@@ -20,6 +20,7 @@ namespace TestMVCLogin.Controllers
             //Check if user is logged in
             if (User.Identity.IsAuthenticated)
             {
+                //Create instance of user
                 var user = User.Identity;
                 ViewBag.Name = user.Name;
 
@@ -28,16 +29,17 @@ namespace TestMVCLogin.Controllers
                 {
                     ViewBag.displayMenu = "Yes";
                 }
+                //The registration is not approved yet
+                else if (isUnregistered())
+                {
+                    ViewBag.displayMenu = "NA";
+                }
                 //User is not Admin, but is logged in
                 else
                 {
                     ViewBag.displayMenu = "No";
                 }
-                //The registration is not approved yet
-                if (User.IsInRole("unregisteredUsers"))
-                {
-                    ViewBag.displayMenu = "NA";
-                }
+                
 
                 return View();
             }
@@ -48,6 +50,7 @@ namespace TestMVCLogin.Controllers
                 return View();
             }
         }
+        //GET: UnregisteredUsers
         public ActionResult unregisteredUsers()
         {
             using (var context = new ApplicationDbContext())
@@ -71,6 +74,25 @@ namespace TestMVCLogin.Controllers
             }
         }
 
+        //Approve a user
+        public ActionResult approveUser(string userName)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                //Get the role ID for unregistered Users
+                var role = (from r in context.Roles where r.Name.Contains("unregisteredUsers") select r).FirstOrDefault();
+                //List all the unregistered Users
+                var user = context.Users.Where(x => x.UserName == userName).FirstOrDefault();
+
+                var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+                userManager.AddToRole(user.Id, "Member");
+                userManager.RemoveFromRole(user.Id, "unregisteredUsers");
+                context.SaveChanges();
+                //Return the view
+                return RedirectToAction("UnregisteredUsers", "Users");
+            }
+        }
+
         //Method to check if the user is on the Admin
         public Boolean isAdminUser()
         {
@@ -82,6 +104,29 @@ namespace TestMVCLogin.Controllers
                     var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
                     var s = UserManager.GetRoles(user.GetUserId());
                     if (s[0].ToString() == "Admin")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return false;
+        }
+
+        //Method to check if the user is not registered
+        public Boolean isUnregistered()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = User.Identity;
+                using (var context = new ApplicationDbContext())
+                {
+                    var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+                    var s = UserManager.GetRoles(user.GetUserId());
+                    if (s[0].ToString() == "unregisteredUsers")
                     {
                         return true;
                     }
