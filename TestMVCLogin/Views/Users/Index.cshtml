@@ -11,6 +11,10 @@ else if (ViewBag.displayMenu == "No")
 {
     <h2>  Welcome <strong>@ViewBag.Name</strong> :) .You are not an admin but you are logged in </h2>
 }
+else if (ViewBag.displayMenu == "NA")
+{
+    <h2>  Your membership application is in progress, please come back soon</h2>
+}
 else
 {
     <h2>  You are not logged in </h2>

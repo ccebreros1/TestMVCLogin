@@ -33,6 +33,12 @@ namespace TestMVCLogin.Controllers
                 {
                     ViewBag.displayMenu = "No";
                 }
+                //The registration is not approved yet
+                if (User.IsInRole("unregisteredUsers"))
+                {
+                    ViewBag.displayMenu = "NA";
+                }
+
                 return View();
             }
             //User not logged in is goiung back to home page
@@ -42,6 +48,28 @@ namespace TestMVCLogin.Controllers
                 return View();
             }
         }
+        public ActionResult unregisteredUsers()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                //Get the role ID for unregistered Users
+                var role = (from r in context.Roles where r.Name.Contains("unregisteredUsers") select r).FirstOrDefault();
+                //List all the unregistered Users
+                var users = context.Users.Where(x => x.Roles.Select(y => y.RoleId).Contains(role.Id)).ToList();
+
+                //Get the unregistered user info 
+                var unregisteredUsers = users.Select(user => new UserGroupViewModel
+                {
+                    Username = user.UserName,
+                    Email = user.Email,
+                    RoleName = "unregisteredUsers"
+                }).ToList();
+                //Create a model
+                var model = new GroupedUserViewModel { Users = unregisteredUsers };
+                //Return the model
+                return View(model);
+            }
+        }
 
         //Method to check if the user is on the Admin
         public Boolean isAdminUser()
@@ -49,16 +77,18 @@ namespace TestMVCLogin.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var user = User.Identity;
-                ApplicationDbContext context = new ApplicationDbContext();
-                var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
-                var s = UserManager.GetRoles(user.GetUserId());
-                if (s[0].ToString() == "Admin")
+                using (var context = new ApplicationDbContext())
                 {
-                    return true;
-                }
-                else
-                {
-                    return false;
+                    var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+                    var s = UserManager.GetRoles(user.GetUserId());
+                    if (s[0].ToString() == "Admin")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
             return false;

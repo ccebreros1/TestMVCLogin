@@ -1,0 +1,28 @@
+﻿@model  TestMVCLogin.Models.GroupedUserViewModel
+@{
+    ViewBag.Title = "Unregistered Users";
+}
+
+<h1>UnregisteredUsers</h1>
+
+<div class="row">
+    <h2>Unreistered Users</h2>
+    @using (Html.BeginForm())
+    {
+        foreach (var item in Model.Users)
+        {
+            <tr>
+                <td style="width:100%; border:dotted 1px;">
+                    @item.Username
+                </td>
+                <td style="width:100%; border:dotted 1px;">
+                    @item.Email
+                </td>
+                <td style="width:100%; border:dotted 1px;">
+                    <input type="submit" value="Create Role" />
+                </td>
+            </tr>
+        }
+    }
+   
+</div>

@@ -141,10 +141,6 @@ namespace TestMVCLogin.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            //Added code for allowing user to choose role (Volunteer, Member, Both)
-            ViewBag.Name = new SelectList(context.Roles.Where(u => !u.Name.Contains("Admin"))
-                                            .ToList(), "Name", "Name");
-
             return View();
         }
 
@@ -169,12 +165,11 @@ namespace TestMVCLogin.Controllers
                         // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);   
                         // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");   
                         //Assign Role to user Here      
-                        await this.UserManager.AddToRoleAsync(user.Id, model.UserRoles);
-                        //Ends Here    
+                        await this.UserManager.AddToRoleAsync(user.Id, "unregisteredUsers");
+                    //Ends Here   
+                    User.Identity.IsAuthenticated.Equals(false);
                         return RedirectToAction("Index", "Users");
                     }
-                    ViewBag.Name = new SelectList(context.Roles.Where(u => !u.Name.Contains("Admin"))
-                                              .ToList(), "Name", "Name");
                     AddErrors(result);
                 }
 
