@@ -56,7 +56,7 @@ namespace TestMVCLogin.Controllers
             using (var context = new ApplicationDbContext())
             {
                 //Get the role ID for unregistered Users
-                var role = (from r in context.Roles where r.Name.Contains("unregisteredUsers") select r).FirstOrDefault();
+                var role = (from r in context.Roles where r.Name.Contains("UnregisteredUser") select r).FirstOrDefault();
                 //List all the unregistered Users
                 var users = context.Users.Where(x => x.Roles.Select(y => y.RoleId).Contains(role.Id)).ToList();
 
@@ -65,7 +65,7 @@ namespace TestMVCLogin.Controllers
                 {
                     Username = user.UserName,
                     Email = user.Email,
-                    RoleName = "unregisteredUsers"
+                    RoleName = "UnregisteredUser"
                 }).ToList();
                 //Create a model
                 var model = new GroupedUserViewModel { Users = unregisteredUsers };
@@ -80,13 +80,13 @@ namespace TestMVCLogin.Controllers
             using (var context = new ApplicationDbContext())
             {
                 //Get the role ID for unregistered Users
-                var role = (from r in context.Roles where r.Name.Contains("unregisteredUsers") select r).FirstOrDefault();
+                var role = (from r in context.Roles where r.Name.Contains("UnregisteredUser") select r).FirstOrDefault();
                 //List all the unregistered Users
                 var user = context.Users.Where(x => x.UserName == userName).FirstOrDefault();
 
                 var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
                 userManager.AddToRole(user.Id, "Member");
-                userManager.RemoveFromRole(user.Id, "unregisteredUsers");
+                userManager.RemoveFromRole(user.Id, "UnregisteredUser");
                 context.SaveChanges();
                 //Return the view
                 return RedirectToAction("UnregisteredUsers", "Users");
@@ -126,7 +126,7 @@ namespace TestMVCLogin.Controllers
                 {
                     var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
                     var s = UserManager.GetRoles(user.GetUserId());
-                    if (s[0].ToString() == "unregisteredUsers")
+                    if (s[0].ToString() == "UnregisteredUser")
                     {
                         return true;
                     }

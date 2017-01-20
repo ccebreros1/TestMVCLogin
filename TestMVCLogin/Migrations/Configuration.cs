@@ -9,7 +9,7 @@ namespace TestMVCLogin.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(TestMVCLogin.Models.ApplicationDbContext context)
